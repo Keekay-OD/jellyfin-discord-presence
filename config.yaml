@@ -1,0 +1,16 @@
+jellyfin:
+  url: "http://10.0.0.48:8096"
+  api_key: "785845d0eac84cebac16f59841227ebc"
+  user_id: ""   # auto-filled after first session
+
+imgur:
+  client_id: "de2d1c28534af9705f669ebe8a69dbaf9a7b28e1"
+
+display:
+  posters: true
+  max_size: 256
+  progress_mode: "bar"  # bar | elapsed | remaining
+  paused: false
+
+discord:
+  client_id: "1449075741810753768"
