@@ -2,3 +2,5 @@ config.yaml
 node_modules/
 node_modules/*
 .env
+poster_cache/
+poster_cache/*
