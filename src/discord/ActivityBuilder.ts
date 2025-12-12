@@ -12,7 +12,7 @@ export function buildActivity({
         details,
         state,
         startTimestamp,
-        largeImageText: `Jellyfin on ${deviceName}`,
+        largeImageText: `VibesFlix on ${deviceName}`,
         smallImageText: paused ? "Paused" : `Playing | ${username}`,
         largeImageUrl,
         smallImageUrl

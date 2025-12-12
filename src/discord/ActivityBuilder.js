@@ -7,7 +7,7 @@ function buildActivity(_a) {
         details: details,
         state: state,
         startTimestamp: startTimestamp,
-        largeImageText: "Jellyfin on ".concat(deviceName),
+        largeImageText: "VibesFlix on ".concat(deviceName),
         smallImageText: paused ? "Paused" : "Playing | ".concat(username),
         largeImageUrl: largeImageUrl,
         smallImageUrl: smallImageUrl

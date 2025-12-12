@@ -42,7 +42,7 @@ export const DiscordService = {
             startTimestamp,
             largeImageKey,
             smallImageKey,
-            largeImageText: "Jellyfin",
+            largeImageText: "VibesFlix",
             smallImageText: isPaused ? "Paused" : "Playing"
         });
 
