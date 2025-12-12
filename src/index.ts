@@ -1,12 +1,6 @@
-import { loadConfig } from "./config/loadConfig.js";
-import { JellyfinWebSocket } from "./jellyfin/WebSocketHandler.js";
 import { DiscordService } from "./discord/DiscordService.js";
+import Tags from "./utils/Tags.js";
 
-console.log("[System] Loading config...");
-export const config = loadConfig();
+console.log(`[${Tags.Discord}] Starting Jellyfin Discord RPC...`);
 
-console.log("[System] Connecting to Discord...");
-await DiscordService.connect();
-
-console.log("[System] Starting Jellyfin WebSocket listener...");
-JellyfinWebSocket.start();
+setInterval(() => DiscordService.UpdateRPC(), 8000);

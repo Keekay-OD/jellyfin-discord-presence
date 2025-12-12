@@ -1,47 +1,45 @@
-import DiscordRPC from "./Client.js";
-import { buildActivity } from "./ActivityBuilder.js";
 import { JellyfinService } from "../jellyfin/JellyfinService.js";
-import { uploadToImgur } from "../imgur/uploadToImgur.js";
+import DiscordRPC from "./Client.js";
+import Tags from "../utils/Tags.js";
+import { uploadToImgur } from "./AssetUploader.js";
 
 export const DiscordService = {
-    async connect() {
-        DiscordRPC.connect();
-    },
-
-    async updateFromJellyfin() {
-        const session = await JellyfinService.getNowPlaying();
+    UpdateRPC: async () => {
+        const session = await JellyfinService.GetMySession();
         if (!session) return;
 
         const np = session.NowPlayingItem;
-        const isPaused = session.PlayState?.IsPaused;
-        const username = session.UserName;
-        const device = session.DeviceName;
+        const paused = session.PlayState.IsPaused;
 
-        let poster = null;
-        let thumb = null;
+        let details = "On Homepage";
+        let state = "Idle";
+        let largeImageUrl = undefined;
+        let smallImageUrl = undefined;
 
-        if (np?.Id && np?.ImageTags?.Primary) {
-            poster = `${process.env.JELLYFIN_URL}/Items/${np.Id}/Images/Primary?tag=${np.ImageTags.Primary}`;
-            poster = await uploadToImgur(poster);
+        if (np) {
+            const series = np.SeriesName || np.Name;
+            const ep = np.Name;
+            const season = np.SeasonName?.split(" ")[1] || "0";
+            const epNum = np.IndexNumber ?? 0;
+
+            details = series;
+            state = `S${season}:E${epNum} - ${ep}`;
+
+            const poster = `${process.env.JELLYFIN_URL}/Items/${np.Id}/Images/Primary?tag=${np.ImageTags?.Primary}`;
+            console.log("[Jellyfin] Poster URL:", poster);
+
+            largeImageUrl = await uploadToImgur(poster, "large");
         }
 
-        if (np?.ImageTags?.Thumb) {
-            thumb = `${process.env.JELLYFIN_URL}/Items/${np.Id}/Images/Thumb?tag=${np.ImageTags.Thumb}`;
-            thumb = await uploadToImgur(thumb);
-        }
-
-        const activity = buildActivity({
-            details: np?.SeriesName || np?.Name,
-            state: np?.EpisodeTitle || "",
-            startTimestamp: isPaused ? undefined :
-                Date.now() - Math.floor(session.PlayState.PositionTicks / 10000),
-            paused: isPaused,
-            username,
-            deviceName: device,
-            largeImageUrl: poster,
-            smallImageUrl: thumb
+        DiscordRPC.updatePresence({
+            details,
+            state,
+            largeImageUrl,
+            smallImageUrl,
+            largeImageText: "Jellyfin Activity",
+            smallImageText: paused ? "Paused" : "Playing"
         });
 
-        DiscordRPC.setActivity(activity);
+        console.log(`[${Tags.Discord}] Updated Presence`);
     }
 };

@@ -1,17 +1,20 @@
 import axios from "axios";
-import { config } from "../index.js";
 
 export const JellyfinService = {
-    async getSessions() {
-        const res = await axios.get(
-            `${config.jellyfin.url}/Sessions?api_key=${config.jellyfin.api_key}`
-        );
-        return res.data;
-    },
+    async GetMySession() {
+        try {
+            const server = process.env.JELLYFIN_URL;
+            const userId = process.env.JELLYFIN_TARGET_USERID;
+            const token = process.env.JELLYFIN_ACCESS_TOKEN;
 
-    async getNowPlaying() {
-        const sessions = await this.getSessions();
-        const active = sessions.find(s => s.NowPlayingItem && !s.PlayState?.IsPaused);
-        return active || sessions[0] || null;
+            const res = await axios.get(`${server}/Sessions`, {
+                headers: { "X-Emby-Token": token }
+            });
+
+            return res.data.find((s: any) => s.UserId === userId) || null;
+        } catch (e) {
+            console.error("[Jellyfin] Error fetching sessions:", e.message);
+            return null;
+        }
     }
 };
