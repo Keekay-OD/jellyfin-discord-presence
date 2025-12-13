@@ -14,6 +14,10 @@ export const JellyfinService = {
             return null;
         }
     },
+    async GetImageAsBase64(url) {
+        const img = await axios.get(url, { responseType: "arraybuffer" });
+        return Buffer.from(img.data).toString("base64");
+    },
     async GetMySession() {
         const all = await this.GetSessions();
         if (!all)
